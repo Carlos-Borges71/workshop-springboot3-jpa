@@ -10,10 +10,12 @@ import org.springframework.context.annotation.Profile;
 
 import com.carlosborges.entities.Category;
 import com.carlosborges.entities.Order;
+import com.carlosborges.entities.Product;
 import com.carlosborges.entities.User;
 import com.carlosborges.entities.enums.OrderStatus;
 import com.carlosborges.repositories.CategoryRepository;
 import com.carlosborges.repositories.OrderRepository;
+import com.carlosborges.repositories.ProductRepository;
 import com.carlosborges.repositories.UserRepository;
 
 @Configuration
@@ -28,6 +30,9 @@ public class TestConfig implements CommandLineRunner{
 	
 	@Autowired
 	private CategoryRepository categoryRepository;
+	
+	@Autowired
+	private ProductRepository productRepository;
 
 	@Override
 	public void run(String... args) throws Exception {
@@ -36,7 +41,15 @@ public class TestConfig implements CommandLineRunner{
 		Category cat2 = new Category(null, "Books");
 		Category cat3 = new Category(null, "Computers");
 		
+		Product p1 = new Product(null, "The Lord the Rings", "Lorem ipsum dolor sit amet, consectetur.", 90.5, "");
+		Product p2 = new Product(null, "Smart TV", "Nulla eu imprdiet purus. Maecenas ante.", 2190.0 , "");
+		Product p3 = new Product(null, "Macbook Pro", "Nam eleifend maximus tortor, at mollis", 1250.0, "");
+		Product p4 = new Product(null, "PC Gamer", "Donec aliquet odio ac rhoncus", 1200.0, "");
+		Product p5 = new Product(null, "Rails for Dumies", "Cras fringilla convallis vel faucibus.", 100.9, "");
+		
+		
 		categoryRepository.saveAll(Arrays.asList(cat1,cat2,cat3));
+		productRepository.saveAll(Arrays.asList(p1,p2,p3,p4,p5));
 		
 		 
 		User u1 = new User(null, "Maria Brown", "maria@gmail.com", "988888888", "123456");

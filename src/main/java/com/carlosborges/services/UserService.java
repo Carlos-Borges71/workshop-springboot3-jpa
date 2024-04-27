@@ -6,11 +6,15 @@ import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.TransactionSystemException;
 
 import com.carlosborges.entities.User;
 import com.carlosborges.repositories.UserRepository;
 import com.carlosborges.services.exceptions.DatabaseException;
 import com.carlosborges.services.exceptions.ResourceNotFoundException;
+
+import jakarta.persistence.EntityNotFoundException;
+import jakarta.validation.ConstraintViolationException;
 
 @Service
 public class UserService {
@@ -28,7 +32,11 @@ public class UserService {
 	}
 	
 	public User insert(User obj) {
+		try {
 		return repository.save(obj);
+		}catch(ConstraintViolationException e) {
+			throw new DatabaseException(e.getMessage());
+		}
 	}
 	 
 	public void delete(Long id) {
@@ -39,14 +47,21 @@ public class UserService {
 		try {
 			repository.deleteById(id);	
 		}catch (DataIntegrityViolationException e) {
-			throw new DatabaseException(e.getMessage());
+			throw new DatabaseException(id);
 		}
 		
 	}
 	public User update(Long id, User obj) {
+		try {
 		User entity = repository.getReferenceById(id);
 		updateData(entity, obj);
 		return repository.save(entity);
+		}catch (EntityNotFoundException e) {
+			throw new ResourceNotFoundException(id);
+		}catch(TransactionSystemException e) {
+			throw new DatabaseException(id);
+		}
+		
 	}
 
 	private void updateData(User entity, User obj) {

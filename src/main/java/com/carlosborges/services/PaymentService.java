@@ -8,8 +8,8 @@ import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.TransactionSystemException;
 
-import com.carlosborges.entities.Product;
-import com.carlosborges.repositories.ProductRepository;
+import com.carlosborges.entities.Payment;
+import com.carlosborges.repositories.PaymentRepository;
 import com.carlosborges.services.exceptions.DatabaseException;
 import com.carlosborges.services.exceptions.ResourceNotFoundException;
 
@@ -17,21 +17,21 @@ import jakarta.persistence.EntityNotFoundException;
 import jakarta.validation.ConstraintViolationException;
 
 @Service
-public class ProductService {
+public class PaymentService {
 	
 	@Autowired
-	private ProductRepository repository;
+	private PaymentRepository repository;
 	
-	public List<Product> findAll(){
+	public List<Payment> findAll(){
 		return repository.findAll();
-	}	
+	}
 	
-	public Product findById(Long id){
-		Optional<Product> obj = repository.findById(id);
+	public Payment findById(Long id){
+		Optional<Payment> obj = repository.findById(id);
 		return obj.orElseThrow(() -> new ResourceNotFoundException(id));
 	}
 	
-	public Product insert(Product obj) {
+	public Payment insert(Payment obj) {
 		try {
 		return repository.save(obj);
 		}catch(ConstraintViolationException e) {
@@ -51,9 +51,9 @@ public class ProductService {
 		}
 		
 	}
-	public Product update(Long id, Product obj) {
+	public Payment update(Long id, Payment obj) {
 		try {
-		Product entity = repository.getReferenceById(id);
+		Payment entity = repository.getReferenceById(id);
 		updateData(entity, obj);
 		return repository.save(entity);
 		}catch (EntityNotFoundException e) {
@@ -64,10 +64,7 @@ public class ProductService {
 		
 	}
 
-	private void updateData(Product entity, Product obj) {
-		entity.setName(obj.getName());
-		entity.setDescription(obj.getDescription());
-		entity.setPrice(obj.getPrice());
-		entity.setImgUrl(obj.getImgUrl());
+	private void updateData(Payment entity, Payment obj) {
+		entity.setMoment(obj.getMoment());				
 	}
 }

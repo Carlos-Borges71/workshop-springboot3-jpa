@@ -4,10 +4,17 @@ import java.util.List;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.TransactionSystemException;
 
 import com.carlosborges.entities.Order;
 import com.carlosborges.repositories.OrderRepository;
+import com.carlosborges.services.exceptions.DatabaseException;
+import com.carlosborges.services.exceptions.ResourceNotFoundException;
+
+import jakarta.persistence.EntityNotFoundException;
+import jakarta.validation.ConstraintViolationException;
 
 @Service
 public class OrderService {
@@ -21,8 +28,45 @@ public class OrderService {
 	
 	public Order findById(Long id){
 		Optional<Order> obj = repository.findById(id);
-		return obj.get();
+		return obj.orElseThrow(() -> new ResourceNotFoundException(id));
 	}
 	
+	public Order insert(Order obj) {
+		try {
+		return repository.save(obj);
+		}catch(ConstraintViolationException e) {
+			throw new DatabaseException(e.getMessage());
+		}
+	}
+	 
+	public void delete(Long id) {
+		Boolean del = repository.existsById(id);
+		if(del == false) {
+			 throw new ResourceNotFoundException(id);
+		} 
+		try {
+			repository.deleteById(id);	
+		}catch (DataIntegrityViolationException e) {
+			throw new DatabaseException(id);
+		}
+		
+	}
+	public Order update(Long id, Order obj) {
+		try {
+		Order entity = repository.getReferenceById(id);
+		updateData(entity, obj);
+		return repository.save(entity);
+		}catch (EntityNotFoundException e) {
+			throw new ResourceNotFoundException(id);
+		}catch(TransactionSystemException e) {
+			throw new DatabaseException(id);
+		}
+		
+	}
 
+	private void updateData(Order entity, Order obj) {
+		entity.setMoment(obj.getMoment());
+		entity.setOrderStatus(obj.getOrderStatus());	
+	}
 }
+

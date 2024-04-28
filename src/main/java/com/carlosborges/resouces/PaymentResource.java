@@ -15,29 +15,30 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
-import com.carlosborges.entities.Product;
-import com.carlosborges.services.ProductService;
+import com.carlosborges.entities.Payment;
+import com.carlosborges.services.PaymentService;
 
 @RestController
-@RequestMapping(value = "/products")
-public class ProductResource { 
+@RequestMapping(value = "/payments")
+public class PaymentResource { 
         
 	@Autowired
-	private ProductService service;
+	private PaymentService service;
 	
 	@GetMapping
-	public ResponseEntity<List<Product>> findAll(){
-	List<Product> list  = service.findAll();
+	public ResponseEntity<List<Payment>> findAll(){
+	List<Payment> list  = service.findAll();
 	return ResponseEntity.ok().body(list);
 	}
 	
 	@GetMapping(value = "/{id}")
-	public ResponseEntity<Product> findById(@PathVariable Long id){
-	Product obj  = service.findById(id);
+	public ResponseEntity<Payment> findById(@PathVariable Long id){
+	Payment obj  = service.findById(id);
 	return ResponseEntity.ok().body(obj);
 	}
+	
 	@PostMapping
-	public ResponseEntity<Product> insert(@RequestBody Product obj){
+	public ResponseEntity<Payment> insert(@RequestBody Payment obj){
 		obj = service.insert(obj);
 		URI uri = ServletUriComponentsBuilder.fromCurrentRequest().path("/{id}").buildAndExpand(obj.getId()).toUri();
 		return ResponseEntity.created(uri).body(obj);			
@@ -50,9 +51,10 @@ public class ProductResource {
 	}
 	
 	@PutMapping(value = "/{id}")
-	public ResponseEntity<Product> update(@PathVariable Long id, @RequestBody Product obj){
+	public ResponseEntity<Payment> update(@PathVariable Long id, @RequestBody Payment obj){
 		obj = service.update(id, obj);
 		return ResponseEntity.ok().body(obj);
 	}
-
+	
+	
 }
